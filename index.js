@@ -29,7 +29,7 @@ let config = {
 
 let game = new Phaser.Game(config);
 let maze;
-let player;
+let player, player_sprite;
 
 function preload() {
   this.load.spritesheet("tileset", "assets/tileset.png", {
@@ -73,15 +73,17 @@ function create() {
     floor_tiles.push(cross_tiles);
   }
 
-  // Sprite init
-  player = this.physics.add.sprite(
-    CELL_WIDTH + CELL_WIDTH / 2,
-    CELL_HEIGHT + CELL_HEIGHT / 2,
+  // Player init
+  player = { x: 1, y: 1 };
+  player_sprite = this.physics.add.sprite(
+    maze_to_pixel_x(player.x),
+    maze_to_pixel_y(player.y),
     "player"
   );
-  player.displayWidth = CELL_WIDTH;
-  player.displayHeight = CELL_HEIGHT;
-  player.scale = SCALE;
+
+  player_sprite.displayWidth = CELL_WIDTH;
+  player_sprite.displayHeight = CELL_HEIGHT;
+  player_sprite.scale = SCALE;
 
   this.anims.create({
     key: "idle",
@@ -90,7 +92,7 @@ function create() {
     repeat: -1,
   });
 
-  player.anims.play("idle", true);
+  player_sprite.anims.play("idle", true);
 
   // Maze init
   maze = generateMaze();
@@ -114,26 +116,36 @@ function update() {
     wasDown.up = true;
   } else if (wasDown.up) {
     wasDown.up = false;
-    player.y -= CELL_HEIGHT;
+    player.y -= 1;
   }
   if (cursors.right.isDown) {
     wasDown.right = true;
   } else if (wasDown.right) {
     wasDown.right = false;
-    player.x += CELL_HEIGHT;
+    player.x += 1;
   }
   if (cursors.down.isDown) {
     wasDown.down = true;
   } else if (wasDown.down) {
     wasDown.down = false;
-    player.y += CELL_HEIGHT;
+    player.y += 1;
   }
   if (cursors.left.isDown) {
     wasDown.left = true;
   } else if (wasDown.left) {
     wasDown.left = false;
-    player.x -= CELL_HEIGHT;
+    player.x -= 1;
   }
+
+  player_sprite.x = maze_to_pixel_x(player.x);
+  player_sprite.y = maze_to_pixel_y(player.y);
+}
+
+function maze_to_pixel_x(x) {
+  return x * CELL_WIDTH + CELL_WIDTH / 2;
+}
+function maze_to_pixel_y(y) {
+  return y * CELL_HEIGHT + CELL_HEIGHT / 2;
 }
 
 /**
