@@ -114,27 +114,31 @@ function update() {
   // TODO: ADD CHECKS IF WALL IN THE WAY
   if (cursors.up.isDown) {
     wasDown.up = true;
-  } else if (wasDown.up) {
+  } else if (!maze[player.x][player.y].up && wasDown.up) {
     wasDown.up = false;
     player.y -= 1;
+    if (player.y < 0) player.y = 0;
   }
   if (cursors.right.isDown) {
     wasDown.right = true;
-  } else if (wasDown.right) {
+  } else if (!maze[player.x][player.y].right && wasDown.right) {
     wasDown.right = false;
     player.x += 1;
+    if (player.x > WIDTH - 1) player.x = WIDTH - 1;
   }
   if (cursors.down.isDown) {
     wasDown.down = true;
-  } else if (wasDown.down) {
+  } else if (!maze[player.x][player.y].down && wasDown.down) {
     wasDown.down = false;
     player.y += 1;
+    if (player.y > HEIGHT - 1) player.y = HEIGHT - 1;
   }
   if (cursors.left.isDown) {
     wasDown.left = true;
-  } else if (wasDown.left) {
+  } else if (!maze[player.x][player.y].left && wasDown.left) {
     wasDown.left = false;
     player.x -= 1;
+    if (player.x < 0) player.x = 0;
   }
 
   player_sprite.x = maze_to_pixel_x(player.x);
@@ -159,5 +163,18 @@ function maze_to_pixel_y(y) {
  * ]
  */
 function generateMaze() {
-  // TODO
+  let m = [];
+  for (let i = 0; i < CELL_WIDTH; i++) {
+    let c = [];
+    for (let j = 0; j < CELL_WIDTH; j++) {
+      c.push({
+        up: false,
+        right: false,
+        down: false,
+        left: false,
+      });
+    }
+    m.push(c);
+  }
+  return m;
 }
