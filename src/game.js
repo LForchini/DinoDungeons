@@ -70,7 +70,7 @@ function create() {
   this.sound.play("song", { volume: 0.2, loop: true });
   footsteps_player = this.sound.add("footsteps", {
     volume: 0.2,
-    rate: 2,
+    rate: 1.75,
     loop: true,
   });
   footsteps_player.play();
