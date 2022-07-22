@@ -1,8 +1,9 @@
 const CELL_WIDTH = 32;
 const CELL_HEIGHT = 32;
 
-const WIDTH = 20;
-const HEIGHT = 20;
+// BOTH WIDTH AND HEIGHT MUST BE ODD FOR A VALID MAZE TO BE GENERATED (I THINK)
+const WIDTH = 21;
+const HEIGHT = 21;
 
 const PIXEL_WIDTH = CELL_WIDTH * WIDTH;
 const PIXEL_HEIGHT = CELL_HEIGHT * HEIGHT;
@@ -78,8 +79,8 @@ function create() {
       let n = [
         i > 0 ? maze[j][i - 1].wall : null,
         j < HEIGHT - 1 ? maze[j + 1][i].wall : null,
-        i < WIDTH - 1 ? maze[j][i+1].wall : null,
-        j > 0 ? maze[j-1][i].wall : null,
+        i < WIDTH - 1 ? maze[j][i + 1].wall : null,
+        j > 0 ? maze[j - 1][i].wall : null,
       ];
       let c = n.filter((v) => v).length;
 
@@ -101,13 +102,13 @@ function create() {
           } else if (n[3]) {
             tile_column.push(ctot(3, 0));
           } else {
-            tile_column.push(ctot(-1, 2))
+            tile_column.push(ctot(-1, 2));
           }
 
           // TWO NEIGHBOURS
         } else if (c == 2) {
           if (n[0] && n[1]) {
-            tile_column.push(ctot(0, 2))
+            tile_column.push(ctot(0, 2));
           } else if (n[0] && n[2]) {
             tile_column.push(ctot(4, 2));
           } else if (n[0] && n[3]) {
@@ -121,7 +122,7 @@ function create() {
           } else {
             tile_column.push(ctot(-1, 2));
           }
-        
+
           // THREE NEIGHBOURS
         } else if (c == 3) {
           if (n[0] && n[1] && n[2]) {
@@ -142,8 +143,6 @@ function create() {
         } else {
           tile_column.push(ctot(-1, 2));
         }
-      
-        
       }
     }
     tile_layer.push(tile_column);
@@ -237,7 +236,7 @@ function ctot(x, y) {
  *    }
  *  ]
  *]
- * 
+ *
  * TODO: currently a placeholder that returns a 2d array of these objects
  */
 function generateMaze() {
@@ -246,63 +245,46 @@ function generateMaze() {
     let c = [];
     for (let j = 0; j < HEIGHT; j++) {
       c.push({
-        wall: true
+        wall: true,
       });
     }
     m.push(c);
   }
 
+  let stack = [{ from: null, to: [1, 1] }];
 
-
-  let stack = [[1, 1]];
   while (stack.length > 0) {
-    let [current_x, current_y] = stack.pop()
-    
+    let o = stack.pop();
+    let [i, j] = o.to;
 
-     let neighbour_coords = [
-        [current_x,current_y - 1],
-        [current_x + 1,current_y],
-        [current_x,current_y + 1],
-        [current_x - 1,current_y]
+    // Create a path between from and to
+    if (!m[i][j].wall) continue;
+
+    m[i][j].wall = false;
+    if (o.from) m[(i + o.from[0]) / 2][(j + o.from[1]) / 2].wall = false;
+
+    // Find walled neighbours and add them
+    let n = [
+      i > 1 ? [i - 2, j] : null,
+      j <= HEIGHT - 2 ? [i, j + 2] : null,
+      i <= WIDTH - 2 ? [i + 2, j] : null,
+      j > 1 ? [i, j - 2] : null,
     ];
-    shuffleArray(neighbour_coords)
+    shuffleArray(n);
 
-    
-    let count_free = neighbour_coords.filter(([vx, vy]) => !m[vx][vy].wall).length;
-    if (count_free == 1 || (current_x == 1 && current_y == 1)) {
-      m[current_x][current_y].wall = false;
-    } else {
-      continue
-    }
-
-    for (let i = 0; i < neighbour_coords.length;i++) {
-      let coord = neighbour_coords[i];
-      let [n_x, n_y] = coord;
-      if (n_x <= 0 || n_x >= WIDTH-1) continue;
-      if (n_y <= 0 || n_y >= HEIGHT - 1) continue;
-      if (!m[n_x][n_y].wall) continue;
-      let n_n_coords = [
-        [n_x,n_y - 1],
-        [n_x + 1,n_y],
-        [n_x,n_y + 1],
-        [n_x - 1,n_y]
-      ];
-
-      let count_free = n_n_coords.filter(([vx, vy]) => !m[vx][vy].wall).length;
-
-      if (count_free == 1) {
-        stack.push([n_x, n_y]);
-      }
-      
-    }
-      
+    n = n
+      .filter((t) => t != null)
+      .filter(([x, y]) => x > 0 && x < WIDTH - 1 && y > 0 && y < HEIGHT - 1)
+      .filter(([x, y]) => m[x][y].wall)
+      .forEach((t) => stack.push({ from: o.to, to: t }));
   }
 
   return m;
 }
+
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
