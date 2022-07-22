@@ -58,33 +58,33 @@ body {
 }
 
 .swal-overlay {
-    background-color: rgba(113, 113, 113, 0.665);
+  background-color: rgba(113, 113, 113, 0.665);
 }
 
 .swal-modal {
-    border-radius: 15px black;
+  border-radius: 15px black;
 }
 
 .swal-title {
-    font-family: "Press Start 2P", cursive;
-    font-size: 30px;
-    text-align: center;
-    color: black;
+  font-family: "Press Start 2P", cursive;
+  font-size: 30px;
+  text-align: center;
+  color: black;
 }
 
 .swal-text {
-    font-family: "Press Start 2P", cursive;
-    font-size: 20px;
-    text-align: center;
-    color: black;
+  font-family: "Press Start 2P", cursive;
+  font-size: 20px;
+  text-align: center;
+  color: black;
 }
 
 .swal-button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    background-color: rgb(152, 106, 147);
-    font-size: 15px;
-    border: 2px solid rgb(152, 106, 147);
-    font-family: "Press Start 2P", cursive;
-    text-align: center;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: rgb(152, 106, 147);
+  font-size: 15px;
+  border: 2px solid rgb(152, 106, 147);
+  font-family: "Press Start 2P", cursive;
+  text-align: center;
 }
