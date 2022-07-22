@@ -330,12 +330,15 @@ function update() {
   if (player.x == WIDTH - 2 && player.y == HEIGHT - 2 && !won && touched_key) {
     footsteps_player.pause();
     this.sound.play("victory", { volume: 0.5, loop: false });
-    swal("You Win!", "Congratulations on finishing the maze!", "success").then(
-      () => {
-        won = true;
-        location.reload();
-      }
-    );
+    swal({
+      title: "You Win!",
+      text: "Congratulations on finishing the maze!",
+      icon: "success",
+      customClass: ".sweet-alert button",
+    }).then(() => {
+      won = true;
+      location.reload();
+    });
     this.stop();
   }
 }
