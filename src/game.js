@@ -14,6 +14,8 @@ const TILESET_OFFSET_X = 6;
 const TILESET_OFFSET_Y = 4;
 const TILESET_WIDTH = 19;
 
+const HOLD_DELAY = 250;
+
 let config = {
   type: Phaser.AUTO,
   width: PIXEL_WIDTH,
@@ -35,12 +37,13 @@ let config = {
 let game = new Phaser.Game(config);
 let maze;
 let player, player_sprite;
-let key_sprite;
+let key_sprite, lock_sprite;
 
 function preload() {
   this.load.image("tileset", "assets/tileset.png");
 
   this.load.image("key", "assets/key.png");
+  this.load.image("padlock", "assets/locked.png");
 
   const spritesheet = [
     "player1.png",
@@ -185,6 +188,15 @@ function create() {
   tile_layer[0][1] = ctot(-2, 2);
   tile_layer[WIDTH - 2][HEIGHT - 2] = ctot(-1, 0);
 
+  lock_sprite = this.physics.add.sprite(
+    maze_to_pixel_x(WIDTH - 2),
+    maze_to_pixel_y(HEIGHT - 2),
+    "padlock"
+  );
+  lock_sprite.displayWidth = CELL_WIDTH;
+  lock_sprite.displayHeight = CELL_HEIGHT;
+  lock_sprite.scale = SCALE;
+
   const map = this.make.tilemap({
     data: tile_layer,
     tileWidth: 16,
@@ -198,9 +210,13 @@ function create() {
 
 let wasDown = {
   up: false,
+  uptime: null,
   right: false,
+  righttime: null,
   left: false,
+  lefttime: null,
   down: false,
+  downtime: null,
 };
 
 let touched_key = false,
@@ -225,39 +241,60 @@ function update() {
     player_sprite.anims.play("idle", true);
   }
 
-  if (cursors.up.isDown) {
+  if (cursors.up.isDown && !wasDown.up) {
     wasDown.up = true;
-  } else if (wasDown.up) {
-    wasDown.up = false;
     player.y -= 1;
     if (maze[player.x][player.y].wall) player.y += 1;
     if (player.y < 0) player.y = 0;
+    wasDown.uptime = Date.now();
+  } else if (cursors.up.isUp && wasDown.up) {
+    wasDown.up = false;
+  } else if (cursors.up.isDown && wasDown.uptime + HOLD_DELAY < Date.now()) {
+    wasDown.up = false;
   }
-  if (cursors.right.isDown) {
+  if (cursors.right.isDown && !wasDown.right) {
     wasDown.right = true;
-  } else if (wasDown.right) {
     facingRight = true;
-    wasDown.right = false;
     player.x += 1;
     if (maze[player.x][player.y].wall) player.x -= 1;
     if (player.x > WIDTH - 1) player.x = WIDTH - 1;
+    wasDown.righttime = Date.now();
+  } else if (cursors.right.isUp && wasDown.right) {
+    wasDown.right = false;
+  } else if (
+    cursors.right.isDown &&
+    wasDown.righttime + HOLD_DELAY < Date.now()
+  ) {
+    wasDown.right = false;
   }
-  if (cursors.down.isDown) {
+  if (cursors.down.isDown && !wasDown.down) {
     wasDown.down = true;
-  } else if (wasDown.down) {
-    wasDown.down = false;
     player.y += 1;
     if (maze[player.x][player.y].wall) player.y -= 1;
     if (player.y > HEIGHT - 1) player.y = HEIGHT - 1;
+    wasDown.downtime = Date.now();
+  } else if (cursors.down.isUp && wasDown.down) {
+    wasDown.down = false;
+  } else if (
+    cursors.down.isDown &&
+    wasDown.downtime + HOLD_DELAY < Date.now()
+  ) {
+    wasDown.down = false;
   }
-  if (cursors.left.isDown) {
+  if (cursors.left.isDown && !wasDown.left) {
     wasDown.left = true;
-  } else if (wasDown.left) {
     facingRight = false;
-    wasDown.left = false;
     player.x -= 1;
     if (maze[player.x][player.y].wall) player.x += 1;
     if (player.x < 0) player.x = 0;
+    wasDown.lefttime = Date.now();
+  } else if (cursors.left.isUp && wasDown.left) {
+    wasDown.left = false;
+  } else if (
+    cursors.left.isDown &&
+    wasDown.lefttime + HOLD_DELAY < Date.now()
+  ) {
+    wasDown.left = false;
   }
 
   player_sprite.x = maze_to_pixel_x(player.x);
@@ -272,6 +309,7 @@ function update() {
   if (maze[player.x][player.y].key && !touched_key) {
     touched_key = true;
     key_sprite.destroy();
+    lock_sprite.destroy();
     this.sound.play("key_collect", { volume: 0.2, loop: false });
   }
 
