@@ -51,9 +51,14 @@ function preload() {
     frameWidth: 24,
     frameHeight: 24,
   });
+
+  this.load.audio("song", "assets/song.mp3");
 }
 
 function create() {
+  // Play audio
+  this.sound.play("song", { volume: 0.2 });
+
   // Player init
   player = { x: 1, y: 1 };
   player_sprite = this.physics.add.sprite(
