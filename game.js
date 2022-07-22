@@ -39,7 +39,15 @@ let player, player_sprite;
 function preload() {
   this.load.image("tileset", "assets/tileset.png");
 
-  this.load.spritesheet("player", "assets/player.png", {
+  const spritesheet = [
+    "player1.png",
+    "player2.png",
+    "player3.png",
+    "player4.png",
+  ];
+  shuffleArray(spritesheet);
+
+  this.load.spritesheet("player", `assets/${spritesheet[0]}`, {
     frameWidth: 24,
     frameHeight: 24,
   });
@@ -169,6 +177,8 @@ let wasDown = {
 };
 
 let won = false;
+let wasFacingRight = true;
+let facingRight = true;
 
 function update() {
   // Player control stuff
@@ -185,6 +195,7 @@ function update() {
   if (cursors.right.isDown) {
     wasDown.right = true;
   } else if (wasDown.right) {
+    facingRight = true;
     wasDown.right = false;
     player.x += 1;
     if (maze[player.x][player.y].wall) player.x -= 1;
@@ -201,6 +212,7 @@ function update() {
   if (cursors.left.isDown) {
     wasDown.left = true;
   } else if (wasDown.left) {
+    facingRight = false;
     wasDown.left = false;
     player.x -= 1;
     if (maze[player.x][player.y].wall) player.x += 1;
@@ -209,6 +221,12 @@ function update() {
 
   player_sprite.x = maze_to_pixel_x(player.x);
   player_sprite.y = maze_to_pixel_y(player.y);
+
+  if (wasFacingRight != facingRight) {
+    wasFacingRight = facingRight;
+
+    player_sprite.flipX = !player_sprite.flipX;
+  }
 
   if (player.x == WIDTH - 2 && player.y == HEIGHT - 2 && !won) {
     alert("You have won!");
