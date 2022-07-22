@@ -57,7 +57,7 @@ function preload() {
 
 function create() {
   // Play audio
-  this.sound.play("song", { volume: 0.2 });
+  this.sound.play("song", { volume: 0.2, loop: true });
 
   // Player init
   player = { x: 1, y: 1 };
