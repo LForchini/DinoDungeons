@@ -15,6 +15,7 @@ const TILESET_OFFSET_Y = 4;
 const TILESET_WIDTH = 19;
 
 const HOLD_DELAY = 250;
+const ANIM_STOP_DELAY = 250;
 
 let config = {
   type: Phaser.AUTO,
@@ -38,6 +39,7 @@ let game = new Phaser.Game(config);
 let maze;
 let player, player_sprite;
 let key_sprite, lock_sprite;
+let footsteps_player;
 
 function preload() {
   this.load.image("tileset", "assets/tileset.png");
@@ -60,11 +62,19 @@ function preload() {
 
   this.load.audio("song", "assets/song.mp3");
   this.load.audio("key_collect", "assets/collect_key.wav");
+  this.load.audio("footsteps", "assets/footsteps.wav");
 }
 
 function create() {
   // Play audio
   this.sound.play("song", { volume: 0.2, loop: true });
+  footsteps_player = this.sound.add("footsteps", {
+    volume: 0.2,
+    rate: 2,
+    loop: true,
+  });
+  footsteps_player.play();
+  footsteps_player.pause();
 
   // Player init
   player = { x: 1, y: 1 };
@@ -236,9 +246,12 @@ function update() {
     cursors.left.isDown
   ) {
     player_sprite.anims.play("walking", true);
+    footsteps_player.resume();
     lastMovement = Date.now();
-  } else if (lastMovement && lastMovement + 500 < Date.now()) {
+  } else if (lastMovement && lastMovement + ANIM_STOP_DELAY < Date.now()) {
     player_sprite.anims.play("idle", true);
+    footsteps_player.pause();
+  } else {
   }
 
   if (cursors.up.isDown && !wasDown.up) {
