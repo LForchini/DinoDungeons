@@ -14,6 +14,8 @@ const TILESET_OFFSET_X = 6;
 const TILESET_OFFSET_Y = 4;
 const TILESET_WIDTH = 19;
 
+const HOLD_DELAY = 250;
+
 let config = {
   type: Phaser.AUTO,
   width: PIXEL_WIDTH,
@@ -208,9 +210,13 @@ function create() {
 
 let wasDown = {
   up: false,
+  uptime: null,
   right: false,
+  righttime: null,
   left: false,
+  lefttime: null,
   down: false,
+  downtime: null,
 };
 
 let touched_key = false,
@@ -240,7 +246,10 @@ function update() {
     player.y -= 1;
     if (maze[player.x][player.y].wall) player.y += 1;
     if (player.y < 0) player.y = 0;
+    wasDown.uptime = Date.now();
   } else if (cursors.up.isUp && wasDown.up) {
+    wasDown.up = false;
+  } else if (cursors.up.isDown && wasDown.uptime + HOLD_DELAY < Date.now()) {
     wasDown.up = false;
   }
   if (cursors.right.isDown && !wasDown.right) {
@@ -249,7 +258,13 @@ function update() {
     player.x += 1;
     if (maze[player.x][player.y].wall) player.x -= 1;
     if (player.x > WIDTH - 1) player.x = WIDTH - 1;
+    wasDown.righttime = Date.now();
   } else if (cursors.right.isUp && wasDown.right) {
+    wasDown.right = false;
+  } else if (
+    cursors.right.isDown &&
+    wasDown.righttime + HOLD_DELAY < Date.now()
+  ) {
     wasDown.right = false;
   }
   if (cursors.down.isDown && !wasDown.down) {
@@ -257,7 +272,13 @@ function update() {
     player.y += 1;
     if (maze[player.x][player.y].wall) player.y -= 1;
     if (player.y > HEIGHT - 1) player.y = HEIGHT - 1;
+    wasDown.downtime = Date.now();
   } else if (cursors.down.isUp && wasDown.down) {
+    wasDown.down = false;
+  } else if (
+    cursors.down.isDown &&
+    wasDown.downtime + HOLD_DELAY < Date.now()
+  ) {
     wasDown.down = false;
   }
   if (cursors.left.isDown && !wasDown.left) {
@@ -266,7 +287,13 @@ function update() {
     player.x -= 1;
     if (maze[player.x][player.y].wall) player.x += 1;
     if (player.x < 0) player.x = 0;
+    wasDown.lefttime = Date.now();
   } else if (cursors.left.isUp && wasDown.left) {
+    wasDown.left = false;
+  } else if (
+    cursors.left.isDown &&
+    wasDown.lefttime + HOLD_DELAY < Date.now()
+  ) {
     wasDown.left = false;
   }
 
