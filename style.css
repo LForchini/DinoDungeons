@@ -56,3 +56,30 @@ body {
   opacity: 0;
   animation: fadeIn 4s ease-in forwards;
 }
+
+.swal-overlay {
+    background-color: rgba(113, 113, 113, 0.361);
+    opacity: 85;
+}
+
+.swal-title {
+    font-family: "Press Start 2P", cursive;
+    font-size: 30px;
+    text-align: center;
+}
+
+.swal-text {
+    font-family: "Press Start 2P", cursive;
+    font-size: 20px;
+    text-align: center;
+}
+
+.swal-button {
+    padding: 7px 19px;
+    border-radius: 2px;
+    background-color: #4962B3;
+    font-size: 15px;
+    border: 1px solid #3e549a;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+    font-family: "Press Start 2P", cursive;
+}
