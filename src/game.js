@@ -35,12 +35,13 @@ let config = {
 let game = new Phaser.Game(config);
 let maze;
 let player, player_sprite;
-let key_sprite;
+let key_sprite, lock_sprite;
 
 function preload() {
   this.load.image("tileset", "assets/tileset.png");
 
   this.load.image("key", "assets/key.png");
+  this.load.image("padlock", "assets/locked.png");
 
   const spritesheet = [
     "player1.png",
@@ -185,6 +186,15 @@ function create() {
   tile_layer[0][1] = ctot(-2, 2);
   tile_layer[WIDTH - 2][HEIGHT - 2] = ctot(-1, 0);
 
+  lock_sprite = this.physics.add.sprite(
+    maze_to_pixel_x(WIDTH - 2),
+    maze_to_pixel_y(HEIGHT - 2),
+    "padlock"
+  );
+  lock_sprite.displayWidth = CELL_WIDTH;
+  lock_sprite.displayHeight = CELL_HEIGHT;
+  lock_sprite.scale = SCALE;
+
   const map = this.make.tilemap({
     data: tile_layer,
     tileWidth: 16,
@@ -272,6 +282,7 @@ function update() {
   if (maze[player.x][player.y].key && !touched_key) {
     touched_key = true;
     key_sprite.destroy();
+    lock_sprite.destroy();
     this.sound.play("key_collect", { volume: 0.2, loop: false });
   }
 
