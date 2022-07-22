@@ -334,7 +334,7 @@ function update() {
       title: "You Win!",
       text: "Congratulations on finishing the maze!",
       icon: "success",
-      customClass: ".sweet-alert button",
+      button: "Play again!",
     }).then(() => {
       won = true;
       location.reload();
