@@ -1,38 +1,90 @@
-.splash{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: green;
-    z-index: 200;
-    color: blue;
+body {
+  background-image: url("./assets/backgroundImage.jpeg");
+  text-align: center;
+  background-color: grey;
+  background-repeat: no-repeat, repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.title {
+  font-family: "Press Start 2P", cursive;
+  font-size: 55px;
+  color: rgb(146, 252, 163);
+  margin-top: 25px;
+  text-align: center;
+  overflow: auto;
+}
+
+.splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgb(152, 106, 147);
+  z-index: 200;
+  color: rgb(146, 252, 163);
+  text-align: center;
+  line-height: 90vh;
+  font-family: "Press Start 2P", cursive;
+  font-size: 30px;
+}
+
+.splash.display-none {
+  position: fixed;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgb(152, 106, 147);
+  z-index: -10;
+  color: rgb(146, 252, 163);
+  text-align: center;
+  line-height: 90vh;
+  transition: all 1s;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 4s ease-in forwards;
+}
+
+.swal-overlay {
+    background-color: rgba(113, 113, 113, 0.665);
+}
+
+.swal-modal {
+    border-radius: 15px black;
+}
+
+.swal-title {
+    font-family: "Press Start 2P", cursive;
+    font-size: 30px;
     text-align: center;
-    line-height: 90vh;
+    color: black;
 }
 
-.splash.display-none{
-    position: fixed;
-    opacity: 0;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: green;
-    z-index: -10;
-    color: blue;
+.swal-text {
+    font-family: "Press Start 2P", cursive;
+    font-size: 20px;
     text-align: center;
-    line-height: 90vh;
-    transition: all 0.5s;
+    color: black;
 }
 
-@keyframes fadeIn{
-    to{
-        opacity: 1;
-    }
-}
-
-.fade-in{
-    opacity: 0;
-    animation: fadeIn 2.5s ease-in forwards;
+.swal-button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: rgb(152, 106, 147);
+    font-size: 15px;
+    border: 2px solid rgb(152, 106, 147);
+    font-family: "Press Start 2P", cursive;
+    text-align: center;
 }
