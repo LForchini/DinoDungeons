@@ -35,9 +35,12 @@ let config = {
 let game = new Phaser.Game(config);
 let maze;
 let player, player_sprite;
+let key_sprite;
 
 function preload() {
   this.load.image("tileset", "assets/tileset.png");
+
+  this.load.image("key", "assets/key.png");
 
   const spritesheet = [
     "player1.png",
@@ -53,6 +56,7 @@ function preload() {
   });
 
   this.load.audio("song", "assets/song.mp3");
+  this.load.audio("key_collect", "assets/collect_key.wav");
 }
 
 function create() {
@@ -103,6 +107,17 @@ function create() {
         j > 0 ? maze[j - 1][i].wall : null,
       ];
       let c = n.filter((v) => v).length;
+
+      if (maze[i][j].key) {
+        key_sprite = this.physics.add.sprite(
+          maze_to_pixel_x(i),
+          maze_to_pixel_y(j),
+          "key"
+        );
+        key_sprite.displayWidth = CELL_WIDTH;
+        key_sprite.displayHeight = CELL_HEIGHT;
+        key_sprite.scale = SCALE;
+      }
 
       if (!maze[j][i].wall) {
         tile_column.push(ctot(2, -2));
@@ -188,7 +203,8 @@ let wasDown = {
   down: false,
 };
 
-let won = false;
+let touched_key = false,
+  won = false;
 let wasFacingRight = true;
 let facingRight = true;
 let lastMovement;
@@ -253,10 +269,20 @@ function update() {
     player_sprite.flipX = !player_sprite.flipX;
   }
 
-  if (player.x == WIDTH - 2 && player.y == HEIGHT - 2 && !won) {
-    alert("You have won!");
-    won = true;
-    location.reload();
+  if (maze[player.x][player.y].key && !touched_key) {
+    touched_key = true;
+    key_sprite.destroy();
+    this.sound.play("key_collect", { volume: 0.2, loop: false });
+  }
+
+  if (player.x == WIDTH - 2 && player.y == HEIGHT - 2 && !won && touched_key) {
+    swal("You Win!", "Congratulations on finishing the maze!", "success").then(
+      () => {
+        won = true;
+        location.reload();
+      }
+    );
+    this.stop();
   }
 }
 
@@ -267,6 +293,9 @@ function maze_to_pixel_y(y) {
   return y * CELL_HEIGHT + CELL_HEIGHT / 2;
 }
 
+/**
+ * Just a little function to convert between an x and y coord to a offset for the tilemap
+ */
 function ctot(x, y) {
   return TILESET_WIDTH * (TILESET_OFFSET_Y + y) + TILESET_OFFSET_X + x;
 }
@@ -289,6 +318,7 @@ function generateMaze() {
     for (let j = 0; j < HEIGHT; j++) {
       c.push({
         wall: true,
+        key: false,
       });
     }
     m.push(c);
@@ -321,6 +351,13 @@ function generateMaze() {
       .filter(([x, y]) => m[x][y].wall)
       .forEach((t) => stack.push({ from: o.to, to: t }));
   }
+
+  let key_array = [];
+  m.forEach((a) => {
+    key_array.push(...a.filter((t) => !t.wall));
+  });
+  shuffleArray(key_array);
+  key_array[0].key = true;
 
   return m;
 }
