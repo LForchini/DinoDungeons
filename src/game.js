@@ -63,6 +63,7 @@ function preload() {
   this.load.audio("song", "assets/song.mp3");
   this.load.audio("key_collect", "assets/collect_key.wav");
   this.load.audio("footsteps", "assets/footsteps.wav");
+  this.load.audio("victory", "assets/victory.mp3");
 }
 
 function create() {
@@ -327,6 +328,8 @@ function update() {
   }
 
   if (player.x == WIDTH - 2 && player.y == HEIGHT - 2 && !won && touched_key) {
+    footsteps_player.pause();
+    this.sound.play("victory", { volume: 0.5, loop: false });
     swal("You Win!", "Congratulations on finishing the maze!", "success").then(
       () => {
         won = true;
