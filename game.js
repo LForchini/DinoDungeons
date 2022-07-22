@@ -57,7 +57,7 @@ function preload() {
 
 function create() {
   // Play audio
-  this.sound.play("song", { volume: 0.2 });
+  this.sound.play("song", { volume: 0.2, loop: true });
 
   // Player init
   player = { x: 1, y: 1 };
@@ -74,6 +74,13 @@ function create() {
   this.anims.create({
     key: "idle",
     frames: this.anims.generateFrameNumbers("player", { start: 0, end: 3 }),
+    frameRate: 8,
+    repeat: -1,
+  });
+
+  this.anims.create({
+    key: "walking",
+    frames: this.anims.generateFrameNumbers("player", { start: 4, end: 8 }),
     frameRate: 8,
     repeat: -1,
   });
@@ -184,10 +191,23 @@ let wasDown = {
 let won = false;
 let wasFacingRight = true;
 let facingRight = true;
+let lastMovement;
 
 function update() {
   // Player control stuff
   let cursors = this.input.keyboard.createCursorKeys();
+
+  if (
+    cursors.up.isDown ||
+    cursors.right.isDown ||
+    cursors.down.isDown ||
+    cursors.left.isDown
+  ) {
+    player_sprite.anims.play("walking", true);
+    lastMovement = Date.now();
+  } else if (lastMovement && lastMovement + 500 < Date.now()) {
+    player_sprite.anims.play("idle", true);
+  }
 
   if (cursors.up.isDown) {
     wasDown.up = true;
