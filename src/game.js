@@ -235,39 +235,39 @@ function update() {
     player_sprite.anims.play("idle", true);
   }
 
-  if (cursors.up.isDown) {
+  if (cursors.up.isDown && !wasDown.up) {
     wasDown.up = true;
-  } else if (wasDown.up) {
-    wasDown.up = false;
     player.y -= 1;
     if (maze[player.x][player.y].wall) player.y += 1;
     if (player.y < 0) player.y = 0;
+  } else if (cursors.up.isUp && wasDown.up) {
+    wasDown.up = false;
   }
-  if (cursors.right.isDown) {
+  if (cursors.right.isDown && !wasDown.right) {
     wasDown.right = true;
-  } else if (wasDown.right) {
     facingRight = true;
-    wasDown.right = false;
     player.x += 1;
     if (maze[player.x][player.y].wall) player.x -= 1;
     if (player.x > WIDTH - 1) player.x = WIDTH - 1;
+  } else if (cursors.right.isUp && wasDown.right) {
+    wasDown.right = false;
   }
-  if (cursors.down.isDown) {
+  if (cursors.down.isDown && !wasDown.down) {
     wasDown.down = true;
-  } else if (wasDown.down) {
-    wasDown.down = false;
     player.y += 1;
     if (maze[player.x][player.y].wall) player.y -= 1;
     if (player.y > HEIGHT - 1) player.y = HEIGHT - 1;
+  } else if (cursors.down.isUp && wasDown.down) {
+    wasDown.down = false;
   }
-  if (cursors.left.isDown) {
+  if (cursors.left.isDown && !wasDown.left) {
     wasDown.left = true;
-  } else if (wasDown.left) {
     facingRight = false;
-    wasDown.left = false;
     player.x -= 1;
     if (maze[player.x][player.y].wall) player.x += 1;
     if (player.x < 0) player.x = 0;
+  } else if (cursors.left.isUp && wasDown.left) {
+    wasDown.left = false;
   }
 
   player_sprite.x = maze_to_pixel_x(player.x);
